@@ -1,7 +1,7 @@
 import { IDbRepository } from './i-db-repository';
 import { IUnitOfWork } from './i-unit-of-work';
 
-export interface IDbFactory {
+export abstract class DbFactoryBase {
     /**
      * 创建表数据仓储
      * 
@@ -22,7 +22,7 @@ export interface IDbFactory {
      *  });
      * ```
      */
-    db<T>(model: new () => T, ...extra: any[]): IDbRepository<T>;
+    public abstract db<T>(model: new () => T, ...extra: any[]): IDbRepository<T>;
 
     /**
      * 创建工作单元(事务)
@@ -38,5 +38,5 @@ export interface IDbFactory {
      *  await uow.commit();
      * ```
      */
-    uow(): IUnitOfWork;
+    public abstract uow(): IUnitOfWork;
 }

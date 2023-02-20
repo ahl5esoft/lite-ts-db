@@ -1,4 +1,4 @@
-export * from './i-db-factory';
+export * from './db-factory-base';
 export * from './i-db-query-option';
 export * from './i-db-query';
 export * from './i-db-repository';
