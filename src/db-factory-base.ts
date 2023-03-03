@@ -1,6 +1,12 @@
 import { IDbRepository } from './i-db-repository';
 import { IUnitOfWork } from './i-unit-of-work';
 
+export class DbModel {
+    readonly id: string;
+}
+
+export type DbOption = (dbRepo: IDbRepository<DbModel>) => void;
+
 export abstract class DbFactoryBase {
     /**
      * 创建表数据仓储
@@ -13,16 +19,16 @@ export abstract class DbFactoryBase {
      *  const dbFactory: DbFactoryBase;
      *  
      *  // 查询所有数据
-     *  const rows = await dbFactory.db(Model).query().toArray();
+     *  const rows = await dbFactory.db(IDbRepository<DbModel>).query().toArray();
      * 
      *  // 单个C:add U:save D:remove
-     *  dbFactory.db(Model).add({
+     *  dbFactory.db(IDbRepository<DbModel>).add({
      *     id: '主键',
      *     // 其他字段 
      *  });
      * ```
      */
-    public abstract db<T>(model: new () => T, ...extra: any[]): IDbRepository<T>;
+    public abstract db<T extends DbModel>(...opts: DbOption[]): IDbRepository<T>;
 
     /**
      * 创建工作单元(事务)
@@ -31,9 +37,9 @@ export abstract class DbFactoryBase {
      * ```typescript
      *  const dbFactory: DbFactoryBase;
      *  const uow = dbFactory.uow();
-     *  dbFactory.db(Model).add(...);
-     *  dbFactory.db(Model).save(...);
-     *  dbFactory.db(Model).remove(...);
+     *  dbFactory.db(IDbRepository<DbModel>).add(...);
+     *  dbFactory.db(IDbRepository<DbModel>).save(...);
+     *  dbFactory.db(IDbRepository<DbModel>).remove(...);
      *  ...
      *  await uow.commit();
      * ```
