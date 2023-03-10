@@ -12,25 +12,17 @@ export function modelDbOption(model: any): DbOption {
 
 export function uowDbOption(uow: IUnitOfWork): DbOption {
     return dbRepo => {
+        (dbRepo as DbRepository<DbModel>).isTx = true;
         (dbRepo as DbRepository<DbModel>).uow = uow as IUnitOfWorkRepository;
     };
 }
 
 export class DbRepository<T extends DbModel> implements IDbRepository<T> {
-    private m_IsTx: boolean;
-
+    public uow: IUnitOfWork;
+    public isTx: boolean;
     public areaNo: number;
+    public model: string;
     public dbOptions: DbOption[];
-
-    public set uow(v: IUnitOfWorkRepository) {
-        this.m_IsTx = true;
-        this.m_Uow = v;
-    }
-
-    private m_Model: string;
-    public set model(v: string) {
-        this.m_Model = v;
-    }
 
     private m_CreateQueryFunc: () => IDbQuery<T>;
     public createQueryFunc(v: () => IDbQuery<T>) {
@@ -42,8 +34,8 @@ export class DbRepository<T extends DbModel> implements IDbRepository<T> {
     ) { }
 
     public async add(entry: T) {
-        this.m_Uow.registerAdd(this.m_Model, entry);
-        if (this.m_IsTx)
+        this.m_Uow.registerAdd(this.model, entry);
+        if (this.isTx)
             return;
 
         await this.m_Uow.commit();
@@ -54,16 +46,16 @@ export class DbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public async remove(entry: T) {
-        this.m_Uow.registerRemove(this.m_Model, entry);
-        if (this.m_IsTx)
+        this.m_Uow.registerRemove(this.model, entry);
+        if (this.isTx)
             return;
 
         await this.m_Uow.commit();
     }
 
     public async save(entry: T) {
-        this.m_Uow.registerSave(this.m_Model, entry);
-        if (this.m_IsTx)
+        this.m_Uow.registerSave(this.model, entry);
+        if (this.isTx)
             return;
 
         await this.m_Uow.commit();
