@@ -5,7 +5,7 @@ export class DbModel {
     readonly id: string;
 }
 
-export type DbOption = (dbRepo: IDbRepository<DbModel>) => void;
+export type DbOption = (dbFactory: DbFactoryBase, dbRepo: IDbRepository<DbModel>) => void;
 
 export abstract class DbFactoryBase {
     public abstract db<T extends DbModel>(...opts: DbOption[]): IDbRepository<T>;
