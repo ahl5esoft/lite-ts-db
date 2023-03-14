@@ -1,11 +1,17 @@
-import { AreaDbModel } from './area-db-model';
 import { DbModel, DbOption } from './db-factory-base';
 import { IDbQuery } from './i-db-query';
 import { IDbRepository } from './i-db-repository';
 import { IUnitOfWork } from './i-unit-of-work';
 import { IUnitOfWorkRepository } from './i-unit-of-work-repository';
 
-type regiterAction = (model: string, entry: any) => void;
+export class AreaDbModel {
+    public areaNo: number;
+    public entry: DbModel;
+
+    public get id() {
+        return this.entry.id;
+    }
+}
 
 export function uowDbOption(uow: IUnitOfWork): DbOption {
     return (_, dbRepo) => {
@@ -52,7 +58,7 @@ export class DbRepository<T extends DbModel> implements IDbRepository<T> {
         await this.exec(this.m_Uow.registerSave, entry);
     }
 
-    private async exec(action: regiterAction, entry: any) {
+    private async exec(action: (model: string, entry: any) => void, entry: any) {
         if (this.areaNo) {
             entry = {
                 entry: entry,
