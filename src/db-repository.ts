@@ -7,16 +7,16 @@ import { IUnitOfWorkRepository } from './i-unit-of-work-repository';
 
 type regiterAction = (model: string, entry: any) => void;
 
-export function modelDbOption(model: any): DbOption {
-    return (_, dbRepo) => {
-        (dbRepo as DbRepository<DbModel>).model = typeof model == 'string' ? model : (model.ctor ?? model.name);
-    };
-}
-
 export function uowDbOption(uow: IUnitOfWork): DbOption {
     return (_, dbRepo) => {
         (dbRepo as DbRepository<DbModel>).isTx = true;
         (dbRepo as DbRepository<DbModel>).uow = uow as IUnitOfWorkRepository;
+    };
+}
+
+export function areaDbOption(areaNo: number): DbOption {
+    return (_, dbRepo) => {
+        (dbRepo as DbRepository<DbModel>).areaNo = areaNo;
     };
 }
 
