@@ -5,12 +5,14 @@ import { IUnitOfWork } from './i-unit-of-work';
 import { IUnitOfWorkRepository } from './i-unit-of-work-repository';
 
 export class AreaDbModel {
-    public areaNo: number;
-    public entry: DbModel;
-
     public get id() {
         return this.entry.id;
     }
+
+    public constructor(
+        public areaNo: number,
+        public entry: DbModel,
+    ) { }
 }
 
 export function uowDbOption(uow: IUnitOfWork): DbOption {
@@ -59,12 +61,8 @@ export class DbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     private async exec(action: (model: string, entry: any) => void, entry: any) {
-        if (this.areaNo) {
-            entry = Object.assign(new AreaDbModel(), {
-                entry: entry,
-                areaNo: this.areaNo
-            });
-        }
+        if (this.areaNo)
+            entry = new AreaDbModel(this.areaNo, entry);
 
         action.bind(this.m_Uow)(this.model, entry);
         if (this.isTx)
