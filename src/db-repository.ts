@@ -60,10 +60,10 @@ export class DbRepository<T extends DbModel> implements IDbRepository<T> {
 
     private async exec(action: (model: string, entry: any) => void, entry: any) {
         if (this.areaNo) {
-            entry = {
+            entry = Object.assign(new AreaDbModel(), {
                 entry: entry,
                 areaNo: this.areaNo
-            } as AreaDbModel;
+            });
         }
 
         action.bind(this.m_Uow)(this.model, entry);
