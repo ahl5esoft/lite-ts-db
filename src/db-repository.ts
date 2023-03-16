@@ -29,7 +29,6 @@ export function areaDbOption(areaNo: number): DbOption {
 }
 
 export class DbRepository<T extends DbModel> implements IDbRepository<T> {
-    public uow: IUnitOfWork;
     public isTx: boolean;
     public areaNo: number;
     public model: string;
@@ -41,11 +40,11 @@ export class DbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public constructor(
-        private m_Uow: IUnitOfWorkRepository,
+        public uow: IUnitOfWorkRepository,
     ) { }
 
     public async add(entry: T) {
-        await this.exec(this.m_Uow.registerAdd, entry);
+        await this.exec(this.uow.registerAdd, entry);
     }
 
     public query() {
@@ -53,21 +52,21 @@ export class DbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public async remove(entry: T) {
-        await this.exec(this.m_Uow.registerRemove, entry);
+        await this.exec(this.uow.registerRemove, entry);
     }
 
     public async save(entry: T) {
-        await this.exec(this.m_Uow.registerSave, entry);
+        await this.exec(this.uow.registerSave, entry);
     }
 
     private async exec(action: (model: string, entry: any) => void, entry: any) {
         if (this.areaNo)
             entry = new AreaDbModel(this.areaNo, entry);
 
-        action.bind(this.m_Uow)(this.model, entry);
+        action.bind(this.uow)(this.model, entry);
         if (this.isTx)
             return;
 
-        await this.m_Uow.commit();
+        await this.uow.commit();
     }
 }
