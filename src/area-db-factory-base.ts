@@ -6,5 +6,5 @@ export abstract class AreaDbFactoryBase extends DbFactoryBase {
      * 
      * @param areaNo 区服编号
      */
-    abstract getAreaDbFactory(areaNo: number): Promise<DbFactoryBase>;
+    public abstract getAreaDbFactory(areaNo: number): Promise<DbFactoryBase>;
 }
