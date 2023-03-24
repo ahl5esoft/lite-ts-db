@@ -32,12 +32,8 @@ export class DbRepository<T extends DbModel> implements IDbRepository<T> {
     public isTx: boolean;
     public areaNo: number;
     public model: string;
+    public createQueryFunc: () => IDbQuery<T>;
     public dbOptions: DbOption[];
-
-    private m_CreateQueryFunc: () => IDbQuery<T>;
-    public createQueryFunc(v: () => IDbQuery<T>) {
-        this.m_CreateQueryFunc = v;
-    }
 
     public constructor(
         public uow: IUnitOfWorkRepository,
@@ -48,7 +44,7 @@ export class DbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public query() {
-        return this.m_CreateQueryFunc();
+        return this.createQueryFunc();
     }
 
     public async remove(entry: T) {
