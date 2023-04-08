@@ -17,6 +17,9 @@ export class AreaDbModel {
 
 export function uowDbOption(uow: IUnitOfWork): DbOption {
     return (_, dbRepo) => {
+        if (!uow)
+            return;
+
         (dbRepo as DbRepository<DbModel>).isTx = true;
         (dbRepo as DbRepository<DbModel>).uow = uow as IUnitOfWorkRepository;
     };
