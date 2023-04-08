@@ -1,4 +1,5 @@
 export * from './area-db-factory';
+export * from './area-db-query';
 export * from './db-factory-base';
 export * from './db-repository';
 export * from './i-db-query';
