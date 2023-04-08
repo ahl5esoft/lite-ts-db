@@ -7,7 +7,7 @@ export class AreaDbFactory extends DbFactoryBase {
 
     public constructor(
         private m_GlobalDbFactory: DbFactoryBase,
-        private m_GetAllAreaFunc: () => Promise<{ [areaNo: number]: DbFactoryBase }>,
+        private m_GetAllFunc: () => Promise<{ [areaNo: number]: DbFactoryBase }>,
     ) {
         super();
     }
@@ -24,18 +24,18 @@ export class AreaDbFactory extends DbFactoryBase {
     }
 
     public async getAreaDbFactory(areaNo: number) {
+        if (!areaNo)
+            return this.m_GlobalDbFactory;
+
         this.m_AllDbFactory ??= new Promise<{ [areaNo: number]: DbFactoryBase; }>(async (s, f) => {
             try {
-                const all = await this.m_GetAllAreaFunc();
-                all[0] = this.m_GlobalDbFactory;
-                s(all);
+                const res = await this.m_GetAllFunc();
+                s(res);
             } catch (ex) {
                 this.m_AllDbFactory = null;
                 f(ex);
             }
         });
-
-        areaNo ??= 0;
 
         const all = await this.m_AllDbFactory;
         if (!all[areaNo])
