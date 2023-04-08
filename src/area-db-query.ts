@@ -1,11 +1,11 @@
-import { AreaDbFactoryBase } from './area-db-factory-base';
+import { AreaDbFactory } from './area-db-factory';
 import { DbModel, DbOption } from './db-factory-base';
 import { IDbQuery, DbQueryOption } from './i-db-query';
 
 export class AreaDbQuery<T extends DbModel> implements IDbQuery<T> {
     public constructor(
+        private m_DbFactory: AreaDbFactory,
         private m_AreaNo: number,
-        private m_DbFactory: AreaDbFactoryBase,
         private m_DbOptions: DbOption[],
     ) { }
 

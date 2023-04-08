@@ -1,4 +1,4 @@
-import { AreaDbFactoryBase } from './area-db-factory-base';
+import { AreaDbFactory } from './area-db-factory';
 import { DbFactoryBase } from './db-factory-base';
 import { AreaDbModel } from './db-repository';
 import { IUnitOfWorkRepository } from './i-unit-of-work-repository';
@@ -16,8 +16,8 @@ export class AreaUnitOfWork implements IUnitOfWorkRepository {
     } = {};
 
     public constructor(
-        private m_DbFactory: AreaDbFactoryBase,
         private m_GlobalDbFactory: DbFactoryBase,
+        private m_AreaDbFactory: AreaDbFactory,
     ) { }
 
     public async commit() {
@@ -29,7 +29,7 @@ export class AreaUnitOfWork implements IUnitOfWorkRepository {
                 const areaNo = Number(areaNo_);
 
                 if (areaNo) {
-                    const dbFactory = await this.m_DbFactory.getAreaDbFactory(areaNo);
+                    const dbFactory = await this.m_AreaDbFactory.getAreaDbFactory(areaNo);
                     uow = dbFactory.uow() as IUnitOfWorkRepository;
                 } else {
                     uow = this.m_GlobalDbFactory.uow() as IUnitOfWorkRepository;

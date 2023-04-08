@@ -1,7 +1,7 @@
 import { notStrictEqual, strictEqual } from 'assert';
 import { Mock, mockAny } from 'lite-ts-mock';
 
-import { AreaDbFactoryBase } from './area-db-factory-base';
+import { AreaDbFactory } from './area-db-factory';
 import { AreaUnitOfWork as Self } from './area-unit-of-work';
 import { DbFactoryBase, DbModel } from './db-factory-base';
 import { AreaDbModel } from './db-repository';
@@ -16,18 +16,18 @@ describe('src/area-unit-of-work.ts', () => {
 
     describe('.commit()', () => {
         it('ok', async () => {
-            const areaDbFactoryMock = new Mock<AreaDbFactoryBase>();
-            const globalDbFactoryMock = new Mock<DbFactoryBase>();
+            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockAreaDbFactory = new Mock<AreaDbFactory>();
+            const self = new Self(mockDbFactory.actual, mockAreaDbFactory.actual);
 
-            const self = new Self(areaDbFactoryMock.actual, globalDbFactoryMock.actual);
             self.registerAdd(TestModel.name, new AreaDbModel(1, {
                 id: '1',
             }));
 
-            const dbFactoryMock = new Mock<DbFactoryBase>();
-            areaDbFactoryMock.expectReturn(
+            const mockOtherDbFactory = new Mock<DbFactoryBase>();
+            mockAreaDbFactory.expectReturn(
                 r => r.getAreaDbFactory(1),
-                dbFactoryMock.actual
+                mockOtherDbFactory.actual
             );
 
             let commitCount = 0;
@@ -36,7 +36,7 @@ describe('src/area-unit-of-work.ts', () => {
                     commitCount++;
                 }
             });
-            dbFactoryMock.expectReturn(
+            mockOtherDbFactory.expectReturn(
                 r => r.uow(),
                 uowMock.actual
             );
@@ -54,9 +54,9 @@ describe('src/area-unit-of-work.ts', () => {
 
     describe('.registerAdd(model: Function, entry: AreaDbModel)', () => {
         it('ok', async () => {
-            const dbFactoryMock = new Mock<AreaDbFactoryBase>();
-            const globalDbFactoryMock = new Mock<DbFactoryBase>();
-            const self = new Self(dbFactoryMock.actual, globalDbFactoryMock.actual);
+            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockAreaDbFactory = new Mock<AreaDbFactory>();
+            const self = new Self(mockDbFactory.actual, mockAreaDbFactory.actual);
 
             self.registerAdd(TestModel.name, new AreaDbModel(1, {
                 id: '1',
@@ -68,9 +68,9 @@ describe('src/area-unit-of-work.ts', () => {
         });
 
         it('no areaNo', async () => {
-            const dbFactoryMock = new Mock<AreaDbFactoryBase>();
-            const globalDbFactoryMock = new Mock<DbFactoryBase>();
-            const self = new Self(dbFactoryMock.actual, globalDbFactoryMock.actual);
+            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockAreaDbFactory = new Mock<AreaDbFactory>();
+            const self = new Self(mockDbFactory.actual, mockAreaDbFactory.actual);
 
             self.registerAdd(TestModel.name, {
                 id: '1',
@@ -84,9 +84,9 @@ describe('src/area-unit-of-work.ts', () => {
 
     describe('.registerAfter(action: () => Promise<void>, key?: string)', () => {
         it('ok', async () => {
-            const dbFactoryMock = new Mock<AreaDbFactoryBase>();
-            const globalDbFactoryMock = new Mock<DbFactoryBase>();
-            const self = new Self(dbFactoryMock.actual, globalDbFactoryMock.actual);
+            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockAreaDbFactory = new Mock<AreaDbFactory>();
+            const self = new Self(mockDbFactory.actual, mockAreaDbFactory.actual);
 
             const action = async () => {
                 console.log(1);
@@ -100,9 +100,9 @@ describe('src/area-unit-of-work.ts', () => {
 
     describe('.registerRemove(model: Function, entry: AreaDbModel)', () => {
         it('ok', async () => {
-            const dbFactoryMock = new Mock<AreaDbFactoryBase>();
-            const globalDbFactoryMock = new Mock<DbFactoryBase>();
-            const self = new Self(dbFactoryMock.actual, globalDbFactoryMock.actual);
+            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockAreaDbFactory = new Mock<AreaDbFactory>();
+            const self = new Self(mockDbFactory.actual, mockAreaDbFactory.actual);
 
             self.registerRemove(TestModel.name, new AreaDbModel(1, {
                 id: '1',
@@ -114,9 +114,9 @@ describe('src/area-unit-of-work.ts', () => {
         });
 
         it('no areaNo', async () => {
-            const dbFactoryMock = new Mock<AreaDbFactoryBase>();
-            const globalDbFactoryMock = new Mock<DbFactoryBase>();
-            const self = new Self(dbFactoryMock.actual, globalDbFactoryMock.actual);
+            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockAreaDbFactory = new Mock<AreaDbFactory>();
+            const self = new Self(mockDbFactory.actual, mockAreaDbFactory.actual);
 
             self.registerRemove(TestModel.name, {
                 id: '1',
@@ -130,9 +130,9 @@ describe('src/area-unit-of-work.ts', () => {
 
     describe('.registerSave(model: Function, entry: AreaDbModel)', () => {
         it('ok', async () => {
-            const dbFactoryMock = new Mock<AreaDbFactoryBase>();
-            const globalDbFactoryMock = new Mock<DbFactoryBase>();
-            const self = new Self(dbFactoryMock.actual, globalDbFactoryMock.actual);
+            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockAreaDbFactory = new Mock<AreaDbFactory>();
+            const self = new Self(mockDbFactory.actual, mockAreaDbFactory.actual);
 
             self.registerSave(TestModel.name, new AreaDbModel(1, {
                 id: '1',
@@ -144,9 +144,9 @@ describe('src/area-unit-of-work.ts', () => {
         });
 
         it('no areaNo', async () => {
-            const dbFactoryMock = new Mock<AreaDbFactoryBase>();
-            const globalDbFactoryMock = new Mock<DbFactoryBase>();
-            const self = new Self(dbFactoryMock.actual, globalDbFactoryMock.actual);
+            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockAreaDbFactory = new Mock<AreaDbFactory>();
+            const self = new Self(mockDbFactory.actual, mockAreaDbFactory.actual);
 
             self.registerSave(TestModel.name, {
                 id: '1',
